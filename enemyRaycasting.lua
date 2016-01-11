@@ -105,7 +105,7 @@ function sendRay(ray, enemy, player, yPos, xPos)
                         end
                     end 
                     if enemy.facing.x==1 then 
-                        if enemyRaycastCollisions(ray, 0, 0, enemy, player, bounds, yPos, xPos) then 
+                        if enemyRaycastCollisions(ray, -enemy.width, 0, enemy, player, bounds, yPos, xPos) then 
                             collision = true 
                         end 
                     end 
@@ -182,7 +182,7 @@ function drawRay(enemy)
                 love.graphics.rectangle('fill', enemy.x-enemy.rayLengths[i], yPos, enemy.rayLengths[i], 1)
             end 
             if enemy.facing.x==1 then
-                love.graphics.rectangle('fill', enemy.x, yPos, enemy.rayLengths[i], 1)
+                love.graphics.rectangle('fill', enemy.x+enemy.width, yPos, enemy.rayLengths[i], 1)
             end 
             if enemy.facing.y==1 then 
                 love.graphics.rectangle('fill', xPos, enemy.y, 1, enemy.rayLengths[i])
