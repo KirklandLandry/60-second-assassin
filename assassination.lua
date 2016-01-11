@@ -106,6 +106,10 @@ function killTargets()
 	player.x = player.x + (Vx*love.timer.getDelta()*15)
 	player.y = player.y + (Vy*love.timer.getDelta()*15)
 
+
+	if Vx >=0 then player.killDirection='right' end
+	if Vx <0 then player.killDirection='left' end
+
 	--if CheckCollision(player.x,player.y,player.width,player.height, 
 	--	enemies[getCurrentTargets()[getCurrentTargetIndex()]].x,enemies[getCurrentTargets()[getCurrentTargetIndex()]].y,enemies[getCurrentTargets()[getCurrentTargetIndex()]].width,enemies[getCurrentTargets()[getCurrentTargetIndex()]].height) then 
 	-- this version will only match the top left of each sprite

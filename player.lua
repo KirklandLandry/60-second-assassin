@@ -1,7 +1,7 @@
 require 'playerAnimation'
 require 'collisions'
 
-player = {x = 33, y = 33, width=nil, height=nil, speed = 150, img = nil, state ='gatherTargets', alive = true}
+player = {x = 33, y = 33, width=nil, height=nil, speed = 150, img = nil, state ='gatherTargets', alive = true, killDirection='right'}
 
 --local Quad = love.graphics.newQuad
 function initializePlayer()
@@ -36,28 +36,28 @@ function checkPlayerInput(dt, collisionTable, enemies)
 
     if love.keyboard.isDown('left', 'a') then 
         if player.x > 0 then
-            player.x = math.floor(player.x - (player.speed * dt))
+            player.x = player.x - (player.speed * dt)--math.floor(player.x - (player.speed * dt))
         	collisionLoop(player,'l', collisionTable)
         	direction = 'left'
         end
     elseif love.keyboard.isDown('right', 'd') then
         -- screen width - player width
         if player.x < (love.graphics.getWidth() - player.width) then     
-            player.x = math.floor(player.x + (player.speed * dt))
+            player.x = player.x + (player.speed * dt)--math.floor(player.x + (player.speed * dt))
             collisionLoop(player,'r', collisionTable)
             direction = 'right'
         end
     end
     if love.keyboard.isDown('up', 'w') then 
         if player.y > 0 then
-            player.y = math.floor(player.y - (player.speed * dt))
+            player.y = player.y - (player.speed * dt)--math.floor(player.y - (player.speed * dt))
         	collisionLoop(player,'u', collisionTable)
         	direction = 'up'
         end
     elseif love.keyboard.isDown('down', 's') then
         -- screen width - player width
         if player.y < (love.graphics.getHeight() - player.height) then
-        	player.y =  math.floor(player.y + (player.speed * dt))
+        	player.y =  player.y + (player.speed * dt)--math.floor(player.y + (player.speed * dt))
         	collisionLoop(player, 'd', collisionTable)
         	direction = 'down'
         end
@@ -83,9 +83,9 @@ swordDown = false
 
 
 
-function drawPlayer()
+function drawPlayer(slomoShadows)
 	
-	drawAnimation(player.x, player.y)
+	drawAnimation(slomoShadows, player.x, player.y)
 
 end
 

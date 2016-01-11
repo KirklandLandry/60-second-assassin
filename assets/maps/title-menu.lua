@@ -1,11 +1,11 @@
 local tileString = [[
 @^^^^^^^^^^^^^^^^^^^^^^^#
 <                       >
+< 60 second assassin    >
 <                       >
-< quit                  >
+< start                 >
 < instructions          >
-<                       >
-<                       >
+< quit                  >
 <                       >
 <                       >
 <                       >
@@ -57,6 +57,16 @@ local quadInfo = {
   { 'x', 736,  0, 2 },
   { 'y', 768,  0, 2 },
   { 'z', 800,  0, 2 },
+  { '1', 832,  0, 2 },
+  { '2', 864,  0, 2 },
+  { '3', 896,  0, 2 },
+  { '4', 928,  0, 2 },
+  { '5', 960,  0, 2 },
+  { '6', 992,  0, 2 },
+  { '7', 1024,  0, 2 },
+  { '8', 1056,  0, 2 },
+  { '9', 1088,  0, 2 },
+  { '0', 1120,  0, 2 },
 }
 
 local imagePaths = {
@@ -65,8 +75,9 @@ local imagePaths = {
 }
 
 local states = {
-  {3*32, 'quit' },
-  {4*32, 'instructions'}
+  {4*32, 'start' },
+  {5*32, 'instructions'},
+  {6*32, 'quit' }
 }
 
 newMenu(32,32,imagePaths, tileString, quadInfo, states)

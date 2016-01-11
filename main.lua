@@ -5,8 +5,10 @@
 -- given to any class that requires checking input
 -- ie calling input = updateInput() would return a table containing all input
 -- and that would be used to check input related stuff
-
+-- tldr->decouple input from main class and also decouple update/draw from other classes
 -- need a similar thing for audio
+
+-- also, everything should operate in actual classes (like in camera)
 
 require 'map-functions'
 require 'player'
@@ -19,12 +21,12 @@ require 'menu-functions'
 require 'slomo'
 require 'levelTimer'
 require 'mapSelector'
-
+require 'menuSelector'
 
 local audio_source = nil
 function love.load()
 	loadMap(initializeMapSelector())
-	loadMenu('assets/maps/pause-menu.lua')
+	loadMenu(initializeMenuSelector())
 	
 	audio_source = love.audio.newSource('assets/audio/music/level1.wav')--, 'stream')
 	audio_source:setVolume(0.5)
@@ -45,7 +47,8 @@ local win = false
 local winScreenLoaded = false
 local musicStarted = false
 local musicPosition = 0
-
+local onTitleScreen = true 
+local titleScreenLoaded = false
 --local currentMap = 'assets/maps/core-dump.lua'
 
 function love.update(dt)
@@ -55,58 +58,61 @@ function love.update(dt)
 
 	input(dt)  -- this is all player driven updates
 
+	if onTitleScreen then 
 
-	if musicStarted then 
-		musicPosition = musicPosition + tempdt
-		--local temp2 = (math.floor(temp * (100) + 0.5) / 100)
-		musicPosition = musicPosition + tempdt
-		print (musicPosition)
-	end 
-	if musicPosition>=156 then --the song length   --audio_source:isPlaying() then 
-		-- need to check if this is first round or not
-		-- need to either restart from loop point or from beginning
-		audio_source:stop()
-		audio_source:play()
-		audio_source:seek(60,'seconds')
-		musicPosition=60
-	end 
-	if levelStart then 
-
-		if not musicStarted then 
-			musicStarted = true 
-			audio_source:play()
+	else 
+		if musicStarted then 
+			musicPosition = musicPosition + tempdt
+			--local temp2 = (math.floor(temp * (100) + 0.5) / 100)
+			--musicPosition = musicPosition + tempdt
+			--print (musicPosition)
 		end 
-
-		if updateLevelTimer(dt,player)<=0  or not player.alive then 
-			--print ("gameOver")
-			--player.alive=false
-			levelStart=false
-			gameOver = true 
-			paused=false
-			win = false 
-
-			-- show a death screen
-			-- then reset everything
-			-- all keystates 
-			-- all enemies
-			-- levelstart
-			-- player
-		elseif win then 
-			levelStart = false
+		if musicPosition>=156 then --the song length   --audio_source:isPlaying() then 
+			-- need to check if this is first round or not
+			-- need to either restart from loop point or from beginning
 			audio_source:stop()
-			musicPosition=0
-			musicStarted = false 
-		else 
-			camera:zoomIn()	
-			if not paused then 
-				-- need on for updating all enemies
-				if player.state == 'gatherTargets' then --not kill and not postKill then 
-					updateEnemies(dt, collisionTable, player)
-				end 	
-			end 
+			audio_source:play()
+			audio_source:seek(60,'seconds')
+			musicPosition=60
 		end 
-	end 	
-	camera:updateCamera(player, bBox)	
+		if levelStart then 
+
+			if not musicStarted then 
+				musicStarted = true 
+				audio_source:play()
+			end 
+
+			if updateLevelTimer(dt,player)<=0  or not player.alive then 
+				--print ("gameOver")
+				--player.alive=false
+				levelStart=false
+				gameOver = true 
+				paused=false
+				win = false 
+
+				-- show a death screen
+				-- then reset everything
+				-- all keystates 
+				-- all enemies
+				-- levelstart
+				-- player
+			elseif win then 
+				levelStart = false
+				audio_source:stop()
+				musicPosition=0
+				musicStarted = false 
+			else 
+				camera:zoomIn()	
+				if not paused then 
+					-- need on for updating all enemies
+					if player.state == 'gatherTargets' then --not kill and not postKill then 
+						updateEnemies(dt, collisionTable, player)
+					end 	
+				end 
+			end 
+		end 	
+		camera:updateCamera(player, bBox)	
+	end 
 end
 
 
@@ -127,7 +133,7 @@ function love.draw()
 				--print (player.state)
 				killTargets()
 			end 	
-			drawPlayer()
+			drawPlayer(slomoShadows)
 		camera:unset()
 		updateFade()
 		drawSlomoBar()
@@ -138,19 +144,25 @@ function love.draw()
 	end 
 	if gameOver then 
 		if not gameOverScreenLoaded then 
-			loadMenu('assets/maps/gameover-menu.lua')
+			loadMenu(getMenu('gameover'))
 			gameOverScreenLoaded = true 
 		end 
 		drawMenu()		
 	end 
 	if win then 
 		if not winScreenLoaded then 
-			loadMenu('assets/maps/win-menu.lua')
+			loadMenu(getMenu('win'))
 			winScreenLoaded = true 
 		end 
 		drawMenu()
 	end 
-
+	if onTitleScreen then 
+		if not titleScreenLoaded then 
+			loadMenu(getMenu('title'))
+			titleScreenLoaded = true 
+		end 
+		drawMenu()
+	end 
 	love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), 150, 0) 
 end 
 
@@ -180,8 +192,14 @@ function input(dt)
 		    end ]]
 			checkSlomoInput(player)
 		    if love.keyboard.isDown('i') and player.state == 'gatherTargets' then --and not kill and not postKill then 
-		    	canKillCheck()
-		    end 
+		    	if not iKeyDown then 
+					iKeyDown = true 
+		    		canKillCheck()
+		    	end 
+		    else 
+		    	iKeyDown = false 
+		    end  
+
 		    if player.state == 'gatherTargets' then --not kill and not postKill then 
 		    	checkPlayerInput(dt, collisionTable, enemies) -- in player class
 		    end 
@@ -190,8 +208,17 @@ function input(dt)
 		end  
 	else 
 		if love.keyboard.isDown('i') and player.alive then 
-			levelStart = true 
+			if not iKeyDown then 
+				iKeyDown = true 
+				levelStart = true 
+			end 
+		else 
+			iKeyDown = false 
 		end 
+	end 
+
+	if onTitleScreen then 
+		menuInput()
 	end 
 
     if love.keyboard.isDown('r') then 
@@ -212,9 +239,8 @@ function input(dt)
     else 
 		nKeyDown=false
     end  
-
-
 end
+iKeyDown = false
 --[[slomoKeyDown=false
 slomoTimerMax=1
 slomoTimer=slomoTimerMax]]
@@ -240,7 +266,7 @@ function reset()
 	resetMap()
 	-- should reload a current map or something. this is bad
 	loadMap(getCurrentMap())
-	loadMenu('assets/maps/pause-menu.lua')
+	loadMenu(getMenu('pause'))
 	--initializePlayer()
 	initializeEnemies(getEnemyTable())
 	--initializeBloodSpray()
@@ -293,7 +319,12 @@ function menuInput()
     --if key=='restart' then 
 
     --else 
-		updateMenu(key)
+		temp = updateMenu(key) 
+		if temp == 'start' then 
+			onTitleScreen = false
+			titleScreenLoaded = false
+			reset() 
+		end 
 	--end 
 end 
 

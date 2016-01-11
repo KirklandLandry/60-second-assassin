@@ -32,10 +32,14 @@ function loadMenu(path)
 	love.filesystem.load(path)()
 end
 
+-- this is bad. should operate 
 function updateMenu(key)
 	if key=='ok' then 
 		if menuStates[currentState][2]=='quit' then 
 			love.event.push('quit')
+		end 
+		if menuStates[currentState][2]=='start' then 
+			return 'start'
 		end 
 	end 
 	if key=='down' then 
@@ -52,7 +56,6 @@ function updateMenu(key)
 	end 
 	if key=='restart' then 
 		if menuStates[currentState][2]=='restart' then 
-			--love.event.push('quit')
 		end 
 	end 
 

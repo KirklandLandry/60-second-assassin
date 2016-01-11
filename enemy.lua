@@ -236,8 +236,11 @@ function drawEnemies()
 		if enemy.target==nil then
 			drawRay(enemy)
 		end 
-		love.graphics.draw(enemy.img, enemy.x, enemy.y, enemy.angle, 1, 1, 0, 0, 0, 0)
-		
+		if enemy.facing.x==-1 then 
+			love.graphics.draw(enemy.img, enemy.x+enemy.width, enemy.y, enemy.angle, -1, 1, 0, 0, 0, 0)
+		else
+			love.graphics.draw(enemy.img, enemy.x, enemy.y, enemy.angle, 1, 1, 0, 0, 0, 0)
+		end 
 		--[[for i,bullet in ipairs(enemy.bullets) do
 
 			love.graphics.push()

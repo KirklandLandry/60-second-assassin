@@ -14,7 +14,8 @@ end
 function initializeMapSelector()
 	maps = {
 		'assets/maps/core-dump.lua',
-		'assets/maps/core-dump2.lua' 
+		'assets/maps/core-dump2.lua',
+ 		'assets/maps/core-dump3.lua'
 	}
 	return maps[index]
 end 

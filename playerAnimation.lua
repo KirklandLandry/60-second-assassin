@@ -45,14 +45,23 @@ function initializePlayerAnimation()
 			Quad( 0,  60, playerTileW, playerTileH, playerSpriteWidth, playerSpriteHeight);
 			Quad( 15, 60, playerTileW, playerTileH, playerSpriteWidth, playerSpriteHeight);
 		};
-		killing = {
+		stabRight = {
 			Quad(30, 60, playerTileW, playerTileH, playerSpriteWidth, playerSpriteHeight);
+		};
+		stabLeft = {
+			Quad(45, 60, playerTileW, playerTileH, playerSpriteWidth, playerSpriteHeight);
 		};
 		swordRight = {
 			Quad(0, 0, swordW, swordH, 48, 26 );
 			Quad(12,0, swordW, swordH, 48, 26 );
 			Quad(24,0, swordW, swordH, 48, 26 );
 			Quad(36,0, swordW, swordH, 48, 26 );
+		};
+		swordLeft = {
+			Quad(0, 13, swordW, swordH, 48, 26 );
+			Quad(12,13, swordW, swordH, 48, 26 );
+			Quad(24,13, swordW, swordH, 48, 26 );
+			Quad(36,13, swordW, swordH, 48, 26 );
 		};
 
 	}
@@ -108,14 +117,39 @@ function updatePlayerAnimation(dt, key, swing)
 	end
 end
 
-function drawAnimation(x,y)
+function drawAnimation(slomoShadows, x,y)
 	-- got an error here? Not sure how.
 	-- playerAnimation.lua:106: bad argument #2 to 'draw' (Quad expected, got nil)
 	--PROBLEM SOLVED: bad variable name -> 2 global variables sharing a name. 
 	if player.state~='gatherTargets' then 
-		love.graphics.draw(playerSprite, quads['killing'][1], x, y)
-		love.graphics.draw(swordSprite, quads['swordRight'][4], x+(playerTileW-4), y-1)
+		if player.killDirection =='right' then 
+			love.graphics.draw(playerSprite, quads['stabRight'][1], x, y)
+			love.graphics.draw(swordSprite, quads['swordRight'][4], x+(playerTileW-4), y-1)
+		end 
+		if player.killDirection =='left' then 
+			love.graphics.draw(playerSprite, quads['stabLeft'][1], x, y)
+			love.graphics.draw(swordSprite, quads['swordLeft'][4], x-12+4, y-1)
+		end 
 	else
+
+		--for i,v in ipairs(slomoShadows) do
+		counter = 1 
+		--love.graphics.setBlendMode('additive')
+		for i=#slomoShadows,1,-1 do
+			if slomoShadows[i].direction==nil then 
+				slomoShadows[i].direction = direction 
+			end 
+			if slomoShadows[i].iterator==nil then 
+				slomoShadows[i].iterator = iterator 
+			end 
+			love.graphics.push()
+				love.graphics.setColor(255,255,255,230-(counter*20))			
+				love.graphics.draw(playerSprite, quads[slomoShadows[i].direction][slomoShadows[i].iterator], slomoShadows[i].x, slomoShadows[i].y)
+				love.graphics.setColor(255,255,255, 255)
+			love.graphics.pop()
+			counter = counter + 1
+		end
+		love.graphics.setBlendMode('alpha')
 		love.graphics.draw(playerSprite, quads[direction][iterator], x, y)
 	end 
 
