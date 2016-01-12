@@ -1,6 +1,6 @@
 local tileString = [[
 #########################
-# AAA^AAAA#       #d^^^d#
+#pAAA^AAAA#       #d^^^d#
 # |||@||||#  ^    # @@@ #
 #        l#  @    #r   l#
 #AAAAA^AA ########### ###
@@ -34,7 +34,8 @@ local quadInfo = {
   { 'L',  0,  0 }, -- static left facing enemy
   { 'R',  0,  0 }, -- static right facing enemy 
   { 'U',  0,  0 }, -- static up facing enemy 
-  { 'D',  0,  0 }  -- static down facing enemy 
+  { 'D',  0,  0 },  -- static down facing enemy 
+  { 'p',  0,  0 }  -- player
   --{ '&', 96,  0 }, -- plant top
   --{ 'l', 96, 32 }  -- plant bottom
 }

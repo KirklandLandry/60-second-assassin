@@ -2,9 +2,9 @@ local tileString = [[
 @^^^^^^^^^^^^^^^^^^^^^^^#
 <                       >
 <                       >
-< quit                  >
+< resume                >
 < instructions          >
-<                       >
+< quit                  >
 <                       >
 <                       >
 <                       >
@@ -65,8 +65,9 @@ local imagePaths = {
 }
 
 local states = {
-  {3*32, 'quit' },
-  {4*32, 'instructions'}
+  {3*32, 'resume' },
+  {4*32, 'instructions'},
+  {5*32, 'quit' }
 }
 
 newMenu(32,32,imagePaths, tileString, quadInfo, states)

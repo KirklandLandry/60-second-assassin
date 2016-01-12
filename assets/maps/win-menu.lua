@@ -16,7 +16,7 @@ local tileString = [[
 <                       >
 <                       >
 <                       >
-<  pat on the back bro  >
+<                       >
 $***********************&
 ]]
 

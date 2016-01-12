@@ -20,5 +20,5 @@ function resetLevelTimer()
 end 
 
 function drawLevelTimer()
-	love.graphics.print(tostring(math.floor(slomoTimer))..'s', 10, 20)
+	love.graphics.print(tostring(math.floor(slomoTimer*100)/100)..'s', 10, 20)
 end 

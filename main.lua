@@ -23,13 +23,17 @@ require 'levelTimer'
 require 'mapSelector'
 require 'menuSelector'
 
-local audio_source = nil
+local bgm = nil
+local blip = nil
+local selectNoise = nil
 function love.load()
 	loadMap(initializeMapSelector())
 	loadMenu(initializeMenuSelector())
 	
-	audio_source = love.audio.newSource('assets/audio/music/level1.wav')--, 'stream')
-	audio_source:setVolume(0.5)
+	bgm = love.audio.newSource('assets/audio/music/level1.wav')--, 'stream')
+	blip = love.audio.newSource('assets/audio/fx/blip.wav')
+	selectNoise = love.audio.newSource('assets/audio/fx/select-noise.mp3')
+	bgm:setVolume(0.5)
 	initializePlayer()
 	initializeEnemies(getEnemyTable())
 	initializeBloodSpray()
@@ -61,28 +65,35 @@ function love.update(dt)
 	if onTitleScreen then 
 
 	else 
-		if musicStarted then 
+		if musicStarted and not paused then 
+			if not bgm:isPlaying() then
+				bgm:play()
+			end 
 			musicPosition = musicPosition + tempdt
 			--local temp2 = (math.floor(temp * (100) + 0.5) / 100)
 			--musicPosition = musicPosition + tempdt
 			--print (musicPosition)
+		elseif bgm:isPlaying() then 
+			bgm:pause() 
 		end 
-		if musicPosition>=156 then --the song length   --audio_source:isPlaying() then 
+		if musicPosition>=156 then --the song length   --bgm:isPlaying() then 
 			-- need to check if this is first round or not
 			-- need to either restart from loop point or from beginning
-			audio_source:stop()
-			audio_source:play()
-			audio_source:seek(60,'seconds')
+			bgm:stop()
+			bgm:play()
+			bgm:seek(60,'seconds')
 			musicPosition=60
 		end 
 		if levelStart then 
 
 			if not musicStarted then 
 				musicStarted = true 
-				audio_source:play()
+				bgm:play()
 			end 
-
-			if updateLevelTimer(dt,player)<=0  or not player.alive then 
+			if not paused then 
+				tempTimer = updateLevelTimer(dt,player)
+			end 
+			if tempTimer<=0  or not player.alive then 
 				--print ("gameOver")
 				--player.alive=false
 				levelStart=false
@@ -98,7 +109,7 @@ function love.update(dt)
 				-- player
 			elseif win then 
 				levelStart = false
-				audio_source:stop()
+				bgm:stop()
 				musicPosition=0
 				musicStarted = false 
 			else 
@@ -176,6 +187,8 @@ function input(dt)
 			if pauseKeyDown == false then 
 				pauseKeyDown = true
 				paused = not paused 
+				selectNoise:stop()
+				selectNoise:play()
 				if paused then 
 					print ('paused')
 				elseif not paused then 
@@ -230,7 +243,7 @@ function input(dt)
     else 
 		rKeyDown=false
     end 
-    if love.keyboard.isDown('n') and win then 
+    if love.keyboard.isDown('n') then --and win then 
     	if nKeyDown==false then 
     		nKeyDown=true
     		getNextMap()
@@ -286,6 +299,8 @@ function menuInput()
 		if pauseMenuW_keyDown==false then 
 			pauseMenuW_keyDown=true 
 			key = 'up'
+			blip:stop()
+			blip:play()
 		end 
     else
 		pauseMenuW_keyDown=false
@@ -294,6 +309,8 @@ function menuInput()
     	if pauseMenuS_keyDown==false then 
 	    	pauseMenuS_keyDown=true
 			key = 'down'
+			blip:stop()
+			blip:play()
 		end 
     else
 		pauseMenuS_keyDown=false
@@ -302,6 +319,8 @@ function menuInput()
     	if pauseMenuI_keyDown==false then 
 	    	pauseMenuI_keyDown=true
 			key = 'ok'
+			selectNoise:stop()
+			selectNoise:play()
 		end 
     else 
 		pauseMenuI_keyDown=false

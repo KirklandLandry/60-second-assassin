@@ -126,12 +126,16 @@ function checkTile(x,y,tile)
 	elseif tile =='D' then 
 		table.insert(enemyTable, {xPos=((x-1)*32)+8, yPos=((y-1)*32)+8, facingX=0, facingY=1, move=false})
 		collisionTable[x][y]=0
-
+	elseif tile=='p' then 
+		player.x = ((x-1)*32)+1
+		player.y = ((y-1)*32)+1
+		collisionTable[x][y]=0
 	elseif tile ~=' ' then
 		collisionTable[x][y]=1
 	else -- add a 2 for doors or something
 		collisionTable[x][y]=0
 	end
+
 end 
 
 

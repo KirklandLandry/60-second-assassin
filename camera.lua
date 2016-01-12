@@ -116,6 +116,8 @@ end
 function camera:zoomIn()
     if scaleModifier>=0.5 then 
       scaleModifier = scaleModifier - 0.02
+      --moves camera to focues on player while it's zooming in
+      camera:setPosition(player.x-((love.graphics.getWidth()*scaleModifier)/2), player.y-((love.graphics.getHeight()*scaleModifier)/2))
       --camera:scale(1)
       camera:setScale(scaleModifier, scaleModifier)
     end 
