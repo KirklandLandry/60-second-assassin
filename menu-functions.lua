@@ -41,6 +41,12 @@ function updateMenu(key)
 		if menuStates[currentState][2]=='start' then 
 			return 'start'
 		end 
+		if menuStates[currentState][2]=='resume' then 
+			return 'resume'
+		end 
+		if menuStates[currentState][2]=='instructions' then 
+			return 'instructions'
+		end 
 	end 
 	if key=='down' then 
 		currentState = currentState + 1

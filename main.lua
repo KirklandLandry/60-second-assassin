@@ -338,11 +338,14 @@ function menuInput()
     --if key=='restart' then 
 
     --else 
-		temp = updateMenu(key) 
+		local temp = updateMenu(key) 
 		if temp == 'start' then 
 			onTitleScreen = false
 			titleScreenLoaded = false
 			reset() 
+		end 
+		if temp =='resume' then 
+			paused = false 
 		end 
 	--end 
 end 

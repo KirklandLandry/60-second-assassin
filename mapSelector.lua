@@ -17,11 +17,13 @@ end
 -- check for out of index
 function initializeMapSelector()
 	maps = {
-		'assets/maps/core-dump.lua',
-		'assets/maps/core-dump2.lua',
- 		'assets/maps/core-dump3.lua',
- 		'assets/maps/core-dump4.lua',
- 		'assets/maps/core-dump5.lua'
+		'assets/maps/map1.lua',
+		'assets/maps/map2.lua',
+ 		'assets/maps/map3.lua',
+ 		'assets/maps/map4.lua',
+ 		'assets/maps/map5.lua',
+ 		'assets/maps/map6.lua'
+
 	}
 	return maps[index]
 end 

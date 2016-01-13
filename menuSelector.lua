@@ -14,10 +14,10 @@ end
 -- check for out of index
 function initializeMenuSelector()
 	menu = {
-		gameover='assets/maps/gameover-menu.lua',
-		pause='assets/maps/pause-menu.lua',
-		win='assets/maps/win-menu.lua',
-		title='assets/maps/title-menu.lua'
+		gameover='assets/menus/gameover-menu.lua',
+		pause='assets/menus/pause-menu.lua',
+		win='assets/menus/win-menu.lua',
+		title='assets/menus/title-menu.lua'
 	}
 	return menu['title']
 end 
