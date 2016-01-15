@@ -42,6 +42,8 @@ function love.load()
 	love.graphics.setDefaultFilter('nearest', 'nearest') -- should be set on a per image basis
 end
 
+
+-- all these bools are terribly horribly awfully bad. Done to save time. Change to a state system to tell what menu you're at
 local paused = false
 local pauseKeyDown = false
 local levelStart = false
@@ -53,6 +55,8 @@ local musicStarted = false
 local musicPosition = 0
 local onTitleScreen = true 
 local titleScreenLoaded = false
+local onInstructionsScreen = false
+local gameWon = false
 --local currentMap = 'assets/maps/core-dump.lua'
 
 function love.update(dt)
@@ -62,8 +66,11 @@ function love.update(dt)
 
 	input(dt)  -- this is all player driven updates
 
-	if onTitleScreen then 
-
+	if gameWon then 
+		bgm:stop()
+		levelStart= false
+	elseif onTitleScreen then 
+		bgm:stop()
 	else 
 		if musicStarted and not paused then 
 			if not bgm:isPlaying() then
@@ -128,53 +135,59 @@ end
 
 
 function love.draw()
-	if not paused then 
-		camera:set()
-			drawMap()
-			drawEnemies()		
-			if player.state == 'postKill' then 
-				--print (player.state)
-				if getEnemiesRemaining(postKillScreen()) <= 0 then 
-					win = true 
-				end 
-			elseif player.state == 'gatherTargets' then 
-				--print (player.state)
-				gatherTargets()
-			elseif player.state == 'kill' then 
-				--print (player.state)
-				killTargets()
-			end 	
-			drawPlayer(slomoShadows)
-		camera:unset()
-		updateFade()
-		drawSlomoBar()
-		drawLevelTimer()
-	end 
-	if paused then 
+	if gameWon then 
 		drawMenu()
-	end 
-	if gameOver then 
-		if not gameOverScreenLoaded then 
-			loadMenu(getMenu('gameover'))
-			gameOverScreenLoaded = true 
+	else 
+		if not paused then 
+			camera:set()
+				drawMap()
+				drawEnemies()		
+				if player.state == 'postKill' then 
+					if getEnemiesRemaining(postKillScreen()) <= 0 then 
+						win = true 
+					end 
+				elseif player.state == 'gatherTargets' then 
+					gatherTargets()
+				elseif player.state == 'kill' then 
+					killTargets()
+				end 	
+				drawPlayer(slomoShadows)
+			camera:unset()
+			--updateFade()
+			love.graphics.push()
+				love.graphics.setColor(0, 0, 0, 100)
+				love.graphics.rectangle('fill', 0, 0, 120, 40)
+				love.graphics.setColor(255, 255, 255, 255)
+			love.graphics.pop()
+			drawSlomoBar()
+			drawLevelTimer()
 		end 
-		drawMenu()		
-	end 
-	if win then 
-		if not winScreenLoaded then 
-			loadMenu(getMenu('win'))
-			winScreenLoaded = true 
+		if paused then 
+			drawMenu()
 		end 
-		drawMenu()
-	end 
-	if onTitleScreen then 
-		if not titleScreenLoaded then 
-			loadMenu(getMenu('title'))
-			titleScreenLoaded = true 
+		if gameOver then 
+			if not gameOverScreenLoaded then 
+				loadMenu(getMenu('gameover'))
+				gameOverScreenLoaded = true 
+			end 
+			drawMenu()		
 		end 
-		drawMenu()
+		if win then 
+			if not winScreenLoaded then 
+				loadMenu(getMenu('win'))
+				winScreenLoaded = true 
+			end 
+			drawMenu()
+		end 
+		if onTitleScreen then 
+			if not titleScreenLoaded then 
+				loadMenu(getMenu('title'))
+				titleScreenLoaded = true 
+			end 
+			drawMenu()
+		end 
 	end 
-	love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), 150, 0) 
+	--love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), 150, 0) 
 end 
 
 
@@ -185,8 +198,11 @@ function input(dt)
 		if love.keyboard.isDown('escape') then 
 			--love.event.push('quit')
 			if pauseKeyDown == false then 
+				loadMenu(getMenu('pause'))
 				pauseKeyDown = true
-				paused = not paused 
+				if not onInstructionsScreen then 
+					paused = not paused 
+				end 
 				selectNoise:stop()
 				selectNoise:play()
 				if paused then 
@@ -223,40 +239,44 @@ function input(dt)
 		if love.keyboard.isDown('i') and player.alive then 
 			if not iKeyDown then 
 				iKeyDown = true 
-				levelStart = true 
+				if not onInstructionsScreen then 
+					levelStart = true 
+				end 
 			end 
 		else 
 			iKeyDown = false 
 		end 
 	end 
 
-	if onTitleScreen then 
+	if onTitleScreen or gameWon then 
 		menuInput()
 	end 
 
     if love.keyboard.isDown('r') then 
     	if rKeyDown==false then 
 	    	rKeyDown=true
-			--key = 'restart'
-			reset()
+	    	if not gameWon then 
+				reset()
+			end 
 		end 
     else 
 		rKeyDown=false
     end 
-    if love.keyboard.isDown('n') then --and win then 
+    if love.keyboard.isDown('n') and win then 
     	if nKeyDown==false then 
     		nKeyDown=true
-    		getNextMap()
-    		reset()
+    		if getNextMap() == 'gameWon' then 
+				loadMenu(getMenu('gamewin'))
+				gameWon = true 
+    		else 
+    			reset()
+    		end 
     	end 
     else 
 		nKeyDown=false
     end  
 end
 iKeyDown = false
---[[slomoKeyDown=false
-slomoTimerMax=1
-slomoTimer=slomoTimerMax]]
 
 
 function reset() 
@@ -270,7 +290,8 @@ function reset()
 	pauseMenuW_keyDown = false
 	pauseMenuS_keyDown = false
 	pauseMenuI_keyDown = false
-
+	onInstructionsScreen = false
+	gameWon = false
 	resetLevelTimer()
 	resetSlomoTimer()
 	resetEnemies()
@@ -295,59 +316,80 @@ rKeyDown = false
 nKeyDown = false
 function menuInput()
 	local key =''
-	if love.keyboard.isDown('w') then
-		if pauseMenuW_keyDown==false then 
-			pauseMenuW_keyDown=true 
-			key = 'up'
-			blip:stop()
-			blip:play()
-		end 
-    else
-		pauseMenuW_keyDown=false
-    end 
-    if love.keyboard.isDown('s') then 
-    	if pauseMenuS_keyDown==false then 
-	    	pauseMenuS_keyDown=true
-			key = 'down'
-			blip:stop()
-			blip:play()
-		end 
-    else
-		pauseMenuS_keyDown=false
-    end 
-    if love.keyboard.isDown('i') then 
-    	if pauseMenuI_keyDown==false then 
-	    	pauseMenuI_keyDown=true
-			key = 'ok'
-			selectNoise:stop()
-			selectNoise:play()
-		end 
-    else 
-		pauseMenuI_keyDown=false
-    end 
+	if not onInstructionsScreen then 
+		if love.keyboard.isDown('w') then
+			if pauseMenuW_keyDown==false then 
+				pauseMenuW_keyDown=true 
+				key = 'up'
+				blip:stop()
+				blip:play()
+			end 
+	    else
+			pauseMenuW_keyDown=false
+	    end 
+	    if love.keyboard.isDown('s') then 
+	    	if pauseMenuS_keyDown==false then 
+		    	pauseMenuS_keyDown=true
+				key = 'down'
+				blip:stop()
+				blip:play()
+			end 
+	    else
+			pauseMenuS_keyDown=false
+	    end 
+	    if love.keyboard.isDown('i') then 
+	    	if pauseMenuI_keyDown==false then 
+		    	pauseMenuI_keyDown=true
+				key = 'ok'
+				selectNoise:stop()
+				selectNoise:play()
+			end 
+	    else 
+			pauseMenuI_keyDown=false
+	    end 
+	end 
 
 
-    --[[if love.keyboard.isDown('r') then 
-    	if rKeyDown==false then 
-	    	rKeyDown=true
-			key = 'restart'
-		end 
-    else 
-		pauseMenuI_keyDown=false
-    end]] 
-    --if key=='restart' then 
+	if love.keyboard.isDown('escape') then 
+		if onInstructionsScreen then 
+			onInstructionsScreen = false 
+			if onTitleScreen then 
+				selectNoise:stop()
+				selectNoise:play()
+				loadMenu(getMenu('title'))
+			elseif paused then 
+				loadMenu(getMenu('pause'))
+			end 
+		end
+		if gameWon then 
 
-    --else 
-		local temp = updateMenu(key) 
-		if temp == 'start' then 
-			onTitleScreen = false
-			titleScreenLoaded = false
-			reset() 
 		end 
-		if temp =='resume' then 
-			paused = false 
+	end 
+
+	local temp = updateMenu(key) 
+	if temp == 'start' then 
+		onTitleScreen = false
+		titleScreenLoaded = false
+		reset() 
+	end 
+	if temp =='resume' then 
+		paused = false 
+	end 
+	if temp =='instructions' then 
+		loadMenu(getMenu('instructions'))
+		onInstructionsScreen = true 
+		if onTitleScreen  then 
+			levelStart = false -- because selecting i on the menu will default to starting the level
 		end 
-	--end 
+	end 
+	if temp =='title' then 
+		musicStarted = false
+		musicPosition = 0
+
+		resetMapSelector()
+		reset()
+	end 
+	
 end 
 
 

@@ -4,7 +4,8 @@ local maps = {}
 function getNextMap()
 	index = index + 1 
 	if index > #maps then 
-		resetMapSelector()
+		--resetMapSelector()
+		return 'gameWon'
 	else 
 		return maps[index]
 	end 

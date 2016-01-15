@@ -17,7 +17,9 @@ function initializeMenuSelector()
 		gameover='assets/menus/gameover-menu.lua',
 		pause='assets/menus/pause-menu.lua',
 		win='assets/menus/win-menu.lua',
-		title='assets/menus/title-menu.lua'
+		title='assets/menus/title-menu.lua',
+		instructions='assets/menus/instructions-menu.lua',
+		gamewin='assets/menus/game-win.lua'
 	}
 	return menu['title']
 end 

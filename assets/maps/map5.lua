@@ -1,22 +1,22 @@
 local tileString = [[
 #########################
-##             l        #
-## #################### #
-## #                  # #
-## #                  # #
-## #                  # #
-## #                  # #
-## #                  # #
-## #                  # #
-## #                  # #
-## #                  # #
-##d#                  # #
-## #                  # #
-## #                  # #
-## #                  # #
-## #                  # #
-#^ ######################
-#@             l       p#
+#    r  #               #
+#p    r #               #
+#    r  #               #
+#         #             #
+###################^A   #
+#                  @|   #
+#                  A^   #
+#    ###D#D#D#D#D#D|@   #
+#      L d d d d d      #
+#      L u u u u u      #
+################## ######
+################## ######
+#rrrrrrrrrrr       #    #
+#rrrrrrrrrrr       #    #
+#AAAAAA^AAA^AAA^####^^###
+#||||||@|||@|||@    @@  #
+#                       #
 #########################
 ]]
 
@@ -34,7 +34,7 @@ local quadInfo = {
   { 'L',  0,  0 }, -- static left facing enemy
   { 'R',  0,  0 }, -- static right facing enemy 
   { 'U',  0,  0 }, -- static up facing enemy 
-  { 'D',  0,  0 },  -- static down facing enemy 
+  { 'D',  0,  0 }, -- static down facing enemy 
   { 'p',  0,  0 }  -- player
   --{ '&', 96,  0 }, -- plant top
   --{ 'l', 96, 32 }  -- plant bottom

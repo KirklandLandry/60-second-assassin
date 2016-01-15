@@ -34,37 +34,41 @@ end
 
 -- this is bad. should operate 
 function updateMenu(key)
-	if key=='ok' then 
-		if menuStates[currentState][2]=='quit' then 
-			love.event.push('quit')
+	if #menuStates>=1 then 
+		if key=='ok' then 
+			if menuStates[currentState][2]=='quit' then 
+				love.event.push('quit')
+			end 
+			if menuStates[currentState][2]=='start' then 
+				return 'start'
+			end 
+			if menuStates[currentState][2]=='resume' then 
+				return 'resume'
+			end 
+			if menuStates[currentState][2]=='instructions' then 
+				return 'instructions'
+			end 
+			if menuStates[currentState][2]=='title' then 
+				return 'title'
+			end 
 		end 
-		if menuStates[currentState][2]=='start' then 
-			return 'start'
+		if key=='down' then 
+			currentState = currentState + 1
+			if currentState > #menuStates then 
+				currentState = 1 
+			end 
 		end 
-		if menuStates[currentState][2]=='resume' then 
-			return 'resume'
+		if key=='up' then 
+			currentState = currentState - 1 
+			if currentState < 1 then 
+				currentState = #menuStates 
+			end 
 		end 
-		if menuStates[currentState][2]=='instructions' then 
-			return 'instructions'
+		if key=='restart' then 
+			if menuStates[currentState][2]=='restart' then 
+			end 
 		end 
 	end 
-	if key=='down' then 
-		currentState = currentState + 1
-		if currentState > #menuStates then 
-			currentState = 1 
-		end 
-	end 
-	if key=='up' then 
-		currentState = currentState - 1 
-		if currentState < 1 then 
-			currentState = #menuStates 
-		end 
-	end 
-	if key=='restart' then 
-		if menuStates[currentState][2]=='restart' then 
-		end 
-	end 
-
 end 
 
 
@@ -80,7 +84,7 @@ function newMenu(tileW, tileH, imagePaths, tileString, quadInfo, states)
 	TileH = tileH
 	
 	for i=1, #imagePaths do
-		print(i)
+		--print(i)
 		setImg=love.graphics.newImage(imagePaths[i])
 		Tilesets[i] = {tilesetW=setImg:getWidth(), tilesetH=setImg:getHeight(), img=setImg}--love.graphics.newImage(tilesetPath)
 		Tilesets[i].img:setFilter('nearest','nearest')

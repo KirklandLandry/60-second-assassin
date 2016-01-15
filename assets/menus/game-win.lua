@@ -1,21 +1,21 @@
 local tileString = [[
 @^^^^^^^^^^^^^^^^^^^^^^^#
 <                       >
-<  instructions         >
+<    you won the game   >
+<    congrats           >
 <                       >
-<  at any time you can  >
-<  press r to restart   >
+<  play from beginning  >
 <                       >
-<  press o to slow      >
-<  down time            >
+<  quit                 >
 <                       >
-<  press i to perform   >
-<  an assassination     >
-<  but only from behind >
-<  a target             >
 <                       >
-<  press esc to pause   >
-<  or exit the menu     >
+<                       >
+<                       >
+<                       >
+<                       >
+<                       >
+<                       >
+<                       >
 <                       >
 $***********************&
 ]]
@@ -65,6 +65,8 @@ local imagePaths = {
 }
 
 local states = {
+  {5*32, 'title' },
+  {7*32, 'quit' }
 }
 
 newMenu(32,32,imagePaths, tileString, quadInfo, states)
