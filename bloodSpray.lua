@@ -1,3 +1,4 @@
+-- modified library
 function initializeBloodSpray()
   --sorry, too lazy to pick an image, just skip point 1a and 1b when you use an image file
   --1a. create a blank 32px*32px image data
