@@ -199,14 +199,4 @@ function checkKey(key)
 
 	direction = key
 
-	--[[if quads[key] then -- this is really ugly. Don't do it like this in your final game.
-		moving = true
-		direction = key
-	end
-
-	if quads[key] and direction == key then -- only stop moving if we're still moving in only that direction.
-		moving = false
-		direction = "down"
-		iterator = 1
-	end]]
 end
