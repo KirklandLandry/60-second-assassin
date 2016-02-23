@@ -32,7 +32,7 @@ function loadMenu(path)
 	love.filesystem.load(path)()
 end
 
--- this is bad. should operate 
+-- this is bad. too tightly coupled
 function updateMenu(key)
 	if #menuStates>=1 then 
 		if key=='ok' then 
