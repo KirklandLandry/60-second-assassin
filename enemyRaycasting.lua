@@ -54,6 +54,7 @@ function sendRay(ray, enemy, player, yPos, xPos)
         -- use this min/mix for the for loop
     -- if facing up or down
         -- use this min/max for the for loop
+    -- SOLUTION: I was accidentally accessing a global var that shouldn't have been global 
     
     --for i=1, #collisionTable[1] do  -- y
     local max = 0
