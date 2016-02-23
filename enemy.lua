@@ -44,8 +44,6 @@ end
 
 function updateEnemies(dt, collisionTable, player)
 
-
-	-- why is the left moving so much faster??
 	for i, enemy in ipairs(enemies) do 
 
         local centerX,centerY,width,height,hypotenuse, angle,dx,dy = nil 
@@ -54,18 +52,18 @@ function updateEnemies(dt, collisionTable, player)
 
     		velocity = enemy.speed
     		centerX = enemy.x + (enemy.width/2)
-		    centerY = enemy.y + (enemy.height/2)
+		centerY = enemy.y + (enemy.height/2)
 	        width = (enemy.target.x+(enemy.target.width/2)) - centerX
 	        height = (enemy.target.y+(enemy.target.width/2)) - centerY
 	        hypotenuse = math.sqrt((width^2) + (height^2))
 	        angle = math.acos(width/hypotenuse)
 	        if height < 0 then 
 	        	dx = (math.cos(angle) * velocity);
-				dy = (math.sin(math.pi + angle) * velocity);    
+			dy = (math.sin(math.pi + angle) * velocity);    
 	        else 
-				dx = (math.cos(angle) * velocity);
-				dy = (math.sin(angle) * velocity);            
-			end 
+			dx = (math.cos(angle) * velocity);
+			dy = (math.sin(angle) * velocity);            
+		end 
 
 			if dx < 0 then enemy.facing.x=-1 end
 			if dx > 0 then enemy.facing.x= 1 end
