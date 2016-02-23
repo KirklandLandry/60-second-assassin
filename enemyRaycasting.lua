@@ -22,7 +22,7 @@ function enemyRaycast(enemy, player)
     return rays
 end 
 
--- need to minimize this shitty loop
+
 function sendRay(ray, enemy, player, yPos, xPos) 
 
 
